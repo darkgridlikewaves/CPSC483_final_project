@@ -40,7 +40,7 @@ Boundaries are based on the quartiles of the Ames Housing dataset, for producing
 
 ### Download Instructions
 1. Go to the Kaggle competition page and download the dataset
-2. Place the following files in `data/raw/`:
+2. Place the following files in `data/kaggle_data/`:
    - `train.csv` — required for training and evaluation
    - `data_description.txt` — feature dictionary (recommended reference for the paper)
 
