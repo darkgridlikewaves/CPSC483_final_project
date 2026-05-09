@@ -38,6 +38,14 @@ Boundaries are based on the quartiles of the Ames Housing dataset, for producing
 - ~1,460 training samples with 79 features describing residential homes in Ames, Iowa
 - Target column: `SalePrice`
 
+### Download Instructions
+1. Go to the Kaggle competition page and download the dataset
+2. Place the following files in `data/raw/`:
+   - `train.csv` — required for training and evaluation
+   - `data_description.txt` — feature dictionary (recommended reference for the paper)
+
+The `data/` directory is git-ignored — do not commit these files.
+
 ## Project Structure
 
 ## Setup
