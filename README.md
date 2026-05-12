@@ -56,6 +56,7 @@ CPSC483_final_project/
 ├── data/kaggle_data/           # Dataset (git-ignored)
 │   └── train.csv
 ├── models/                     # Saved models (git-ignored)
+├── notebooks/                  # Exploratory Data Analysis
 ├── outputs/
 │   ├── figures/                # Plots (git-ignored)
 │   └── reports/                # Metrics CSVs (git-ignored)
@@ -109,6 +110,15 @@ streamlit run app.py
 *(Note for Windows users: If the command above is not recognized, run `python -m streamlit run app.py` instead).*
 
 This will open a local web browser page where you can input specific housing features (like square footage and neighborhood) and receive a real-time price and tier prediction from the trained Random Forest models.
+
+### Viewing the Exploratory Data Analysis (EDA)
+
+The data exploration and visualization phase is documented in a Jupyter Notebook. 
+
+To view the analysis, charts, and correlation matrix:
+1. Navigate to the `notebooks/` directory in this repository.
+2. Click on `01_eda.ipynb` to view it directly in your browser via GitHub.
+3. Alternatively, you can open the file locally using VS Code (with the Jupyter extension installed) or JupyterLab.
 
 ---
 
