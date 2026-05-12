@@ -50,6 +50,25 @@ The `data/` directory is git-ignored — do not commit these files.
 
 ## Project Structure
 
+```
+CPSC483_final_project/
+├── data/kaggle_data/           # Dataset (git-ignored)
+│   └── train.csv
+├── models/                     # Saved models (git-ignored)
+├── outputs/
+│   ├── figures/                # Plots (git-ignored)
+│   └── reports/                # Metrics CSVs (git-ignored)
+├── src/
+│   ├── config.py               # Paths and constants
+│   ├── preprocessing.py        # Data loading and feature pipeline
+│   ├── train_regression.py     # Ridge and Random Forest Regressor
+│   ├── train_classification.py # Logistic Regression and Random Forest Classifier
+│   └── evaluate.py             # Metrics, plots, and reports
+└── run_pipeline.py             # Main entry point
+```
+
+---
+
 ## Setup
 
 ### Requirements
@@ -60,8 +79,12 @@ The `data/` directory is git-ignored — do not commit these files.
 pip install -r requirements.txt
 ```
 
+### Running the Pipeline
+
+From the project root directory, run:
+
 ```bash
-python run_pipeline.py
+python .\run_pipeline.py
 ```
 
 This will:
@@ -71,6 +94,8 @@ This will:
 4. Generate all evaluation metrics, confusion matrices, and ROC curves
 5. Save trained models to `models/` and plots to `outputs/figures/`
 
+---
+
 ## Outputs
 
 After running the pipeline, three directories are created (all git-ignored):
@@ -78,12 +103,17 @@ After running the pipeline, three directories are created (all git-ignored):
 **`models/`** — trained sklearn pipelines (preprocessor + model), saved with joblib
 - `ridge.joblib`
 - `random_forest_reg.joblib`
+- `logistic_regression.joblib`
+- `random_forest_clf.joblib`
 
-**`outputs/figures/`** — predicted-vs-actual scatter plots
+**`outputs/figures/`** — evaluation plots
 - `reg_pred_vs_actual_ridge.png`
 - `reg_pred_vs_actual_random_forest_reg.png`
+- `clf_confusion_logistic_regression.png`
+- `clf_confusion_random_forest_clf.png`
+- `clf_roc_logistic_regression.png`
+- `clf_roc_random_forest_clf.png`
 
 **`outputs/reports/`** — evaluation metrics
-- `regression_metrics.csv` — RMSE, MAE, and R² for both models
-
-# test
+- `regression_metrics.csv` — RMSE, MAE, and R² for both regression models
+- `classification_metrics.csv` — Accuracy, Precision, Recall, F1, and ROC AUC for both classifiers

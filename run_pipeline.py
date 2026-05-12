@@ -1,34 +1,50 @@
-from src.config import FIGURES_DIR, MODELS_DIR, REPORTS_DIR
-from src.evaluate import evaluate_regression
-from src.preprocessing import (
-    build_preprocessing_pipeline,
-    get_feature_lists,
-    load_and_split,
-)
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from src.config import RANDOM_SEED, TARGET_COL, TIER_BOUNDARIES, USE_LOG_TARGET
+from src.evaluate import evaluate_classification, evaluate_regression
+from src.preprocessing import build_preprocessing_pipeline, get_feature_lists, load_data
+from src.train_classification import train_classification_models
 from src.train_regression import train_regression_models
 
 
+def make_tier_labels(y_raw):
+    """Bin raw SalePrice values into 4 tier labels (0-3)."""
+    bins = [0] + TIER_BOUNDARIES + [float("inf")]
+    return pd.cut(y_raw, bins=bins, labels=[0, 1, 2, 3]).astype(int)
+
+
 def main():
-    for d in (MODELS_DIR, FIGURES_DIR, REPORTS_DIR):
-        d.mkdir(parents=True, exist_ok=True)
+    print("Loading data...")
+    df = load_data()
 
-    print("[1/3] Loading and splitting data...")
-    X_train, X_test, y_train, y_test = load_and_split()
+    y_raw = df[TARGET_COL]
+    y_reg = np.log1p(y_raw) if USE_LOG_TARGET else y_raw.values
+    y_clf = make_tier_labels(y_raw)
+    X = df.drop(columns=[TARGET_COL])
 
-    num_cols, cat_cols = get_feature_lists(X_train)
-    preprocessor = build_preprocessing_pipeline(num_cols, cat_cols)
+    X_train, X_test, y_reg_train, y_reg_test, y_clf_train, y_clf_test = train_test_split(
+        X, y_reg, y_clf,
+        test_size=0.2,
+        random_state=RANDOM_SEED,
+    )
 
-    print("[2/3] Training regression models...")
-    reg_models = train_regression_models(preprocessor, X_train, y_train)
+    print("Building preprocessor...")
+    numerical_cols, categorical_cols = get_feature_lists(df)
+    preprocessor = build_preprocessing_pipeline(numerical_cols, categorical_cols)
 
-    print("[3/3] Evaluating...")
-    reg_metrics = evaluate_regression(reg_models, X_test, y_test)
-
-    print("\nRegression metrics:")
+    print("\n--- Regression ---")
+    reg_models = train_regression_models(preprocessor, X_train, y_reg_train)
+    reg_metrics = evaluate_regression(reg_models, X_test, y_reg_test)
     print(reg_metrics.to_string(index=False))
-    print(f"\nModels saved to: {MODELS_DIR}")
-    print(f"Figures saved to: {FIGURES_DIR}")
-    print(f"Reports saved to: {REPORTS_DIR}")
+
+    print("\n--- Classification ---")
+    clf_models = train_classification_models(preprocessor, X_train, y_clf_train)
+    clf_metrics = evaluate_classification(clf_models, X_test, y_clf_test)
+    print(clf_metrics.to_string(index=False))
+
+    print("\nDone. Models saved to models/, outputs saved to outputs/")
 
 
 if __name__ == "__main__":

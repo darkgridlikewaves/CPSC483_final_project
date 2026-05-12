@@ -5,9 +5,22 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    mean_absolute_error,
+    mean_squared_error,
+    precision_score,
+    r2_score,
+    recall_score,
+    roc_auc_score,
+    roc_curve,
+)
+from sklearn.preprocessing import label_binarize
 
-from src.config import FIGURES_DIR, REPORTS_DIR, USE_LOG_TARGET
+from src.config import FIGURES_DIR, REPORTS_DIR, TIER_LABELS, USE_LOG_TARGET
 
 
 def _ensure_dirs():
@@ -49,4 +62,54 @@ def evaluate_regression(models, X_test, y_test):
 
     metrics_df = pd.DataFrame(metric_rows)
     metrics_df.to_csv(REPORTS_DIR / "regression_metrics.csv", index=False)
+    return metrics_df
+
+
+def evaluate_classification(models, X_test, y_test):
+    _ensure_dirs()
+    classes = [0, 1, 2, 3]
+    y_test_bin = label_binarize(y_test, classes=classes)
+
+    metric_rows = []
+    for model_name, model in models.items():
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)
+
+        metric_rows.append({
+            "model": model_name,
+            "accuracy": float(accuracy_score(y_test, y_pred)),
+            "precision_weighted": float(precision_score(y_test, y_pred, average="weighted")),
+            "recall_weighted": float(recall_score(y_test, y_pred, average="weighted")),
+            "f1_weighted": float(f1_score(y_test, y_pred, average="weighted")),
+            "roc_auc_ovr": float(roc_auc_score(y_test_bin, y_prob, multi_class="ovr", average="weighted")),
+        })
+
+        # Confusion matrix
+        fig, ax = plt.subplots(figsize=(6, 5))
+        ConfusionMatrixDisplay(
+            confusion_matrix(y_test, y_pred),
+            display_labels=TIER_LABELS,
+        ).plot(ax=ax, colorbar=False)
+        ax.set_title(f"{model_name}: confusion matrix")
+        fig.tight_layout()
+        fig.savefig(FIGURES_DIR / f"clf_confusion_{model_name}.png", dpi=150)
+        plt.close(fig)
+
+        # ROC curves
+        fig, ax = plt.subplots(figsize=(7, 5))
+        for i, label in enumerate(TIER_LABELS):
+            fpr, tpr, _ = roc_curve(y_test_bin[:, i], y_prob[:, i])
+            auc = roc_auc_score(y_test_bin[:, i], y_prob[:, i])
+            ax.plot(fpr, tpr, label=f"{label} (AUC={auc:.2f})")
+        ax.plot([0, 1], [0, 1], "k--", linewidth=1)
+        ax.set_xlabel("False Positive Rate")
+        ax.set_ylabel("True Positive Rate")
+        ax.set_title(f"{model_name}: ROC curves (one-vs-rest)")
+        ax.legend(loc="lower right")
+        fig.tight_layout()
+        fig.savefig(FIGURES_DIR / f"clf_roc_{model_name}.png", dpi=150)
+        plt.close(fig)
+
+    metrics_df = pd.DataFrame(metric_rows)
+    metrics_df.to_csv(REPORTS_DIR / "classification_metrics.csv", index=False)
     return metrics_df
