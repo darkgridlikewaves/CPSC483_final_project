@@ -9,6 +9,7 @@ predict a price tier: Low Tier / Medium Tier / High Tier / Luxury.
 ## Team
 * Sebastian Pfander
 * Vincent Polanco
+* Ethan Santos
 
 ---
 
