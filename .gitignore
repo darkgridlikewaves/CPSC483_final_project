@@ -1,0 +1,22 @@
+# Python Cache Files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Project Datasets
+data/kaggle_data/
+
+# Trained Models
+models/
+
+# Pipeline Outputs
+outputs/
+
+# Virtual Environments
+.venv/
+.env/
+.env
+
+# Streamlit/OS specific
+.DS_Store

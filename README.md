@@ -65,7 +65,8 @@ CPSC483_final_project/
 │   ├── train_regression.py     # Ridge and Random Forest Regressor
 │   ├── train_classification.py # Logistic Regression and Random Forest Classifier
 │   └── evaluate.py             # Metrics, plots, and reports
-└── run_pipeline.py             # Main entry point
+├── run_pipeline.py             # Main entry point
+└── app.py                      # Streamlit interactive web app
 ```
 
 ---
@@ -94,6 +95,20 @@ This will:
 3. Train and tune Logistic Regression and Random Forest Classifier (classification)
 4. Generate all evaluation metrics, confusion matrices, and ROC curves
 5. Save trained models to `models/` and plots to `outputs/figures/`
+
+
+### Running the Web App (Demo)
+
+Once you have trained the models by running the pipeline, you can launch the interactive web interface to test the predictions.
+From the project root directory, run:
+
+```bash
+streamlit run app.py
+```
+
+*(Note for Windows users: If the command above is not recognized, run `python -m streamlit run app.py` instead).*
+
+This will open a local web browser page where you can input specific housing features (like square footage and neighborhood) and receive a real-time price and tier prediction from the trained Random Forest models.
 
 ---
 
