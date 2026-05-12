@@ -11,8 +11,9 @@ PARAM_GRIDS = {
         "model__alpha": [0.1, 1.0, 10.0, 100.0, 1000.0],
     },
     "random_forest_reg": {
-        "model__n_estimators": [100, 300],
+        "model__n_estimators": [100, 200, 300],
         "model__max_depth": [None, 10, 20],
+        "model__min_samples_split": [2, 10],
         "model__min_samples_leaf": [1, 4],
     },
 }
