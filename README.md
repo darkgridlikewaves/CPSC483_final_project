@@ -8,6 +8,7 @@ predict a price tier: Low Tier / Medium Tier / High Tier / Luxury.
 
 ## Team
 * Sebastian Pfander
+* Vincent Polanco
 
 ---
 
@@ -40,6 +41,7 @@ Boundaries are based on the quartiles of the Ames Housing dataset, for producing
 
 ### Download Instructions
 1. Go to the Kaggle competition page and download the dataset
+   - https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/overview
 2. Place the following files in `data/kaggle_data/`:
    - `train.csv` — required for training and evaluation
    - `data_description.txt` — feature dictionary (recommended reference for the paper)
@@ -69,3 +71,17 @@ This will:
 4. Generate all evaluation metrics, confusion matrices, and ROC curves
 5. Save trained models to `models/` and plots to `outputs/figures/`
 
+## Outputs
+
+After running the pipeline, three directories are created (all git-ignored):
+
+**`models/`** — trained sklearn pipelines (preprocessor + model), saved with joblib
+- `ridge.joblib`
+- `random_forest_reg.joblib`
+
+**`outputs/figures/`** — predicted-vs-actual scatter plots
+- `reg_pred_vs_actual_ridge.png`
+- `reg_pred_vs_actual_random_forest_reg.png`
+
+**`outputs/reports/`** — evaluation metrics
+- `regression_metrics.csv` — RMSE, MAE, and R² for both models

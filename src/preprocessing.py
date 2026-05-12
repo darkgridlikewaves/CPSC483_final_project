@@ -8,13 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from src.config import (
-    RANDOM_SEED,
-    TARGET_COL,
-    TIER_BOUNDARIES,
-    TRAIN_CSV,
-    USE_LOG_TARGET,
-)
+from src.config import RANDOM_SEED, TARGET_COL, TRAIN_CSV, USE_LOG_TARGET
 
 
 def load_data(csv_path=TRAIN_CSV):
@@ -64,32 +58,18 @@ def build_preprocessing_pipeline(numerical_cols, categorical_cols):
     return preprocessor
 
 
-def make_tier_labels(y_raw):
-    """
-    Convert raw SalePrice values into integer tier labels (0-3).
-    """
-    tiers = pd.cut(
-        y_raw,
-        bins=TIER_BOUNDARIES,
-        labels=[0, 1, 2, 3],
-    )
-    return tiers.astype(int)
-
-
 def load_and_split(csv_path=TRAIN_CSV, test_size=0.2):
     df = load_data(csv_path)
 
     y_raw = df[TARGET_COL]
-    y_reg = np.log1p(y_raw) if USE_LOG_TARGET else y_raw.values
-    y_clf = make_tier_labels(y_raw)
+    y = np.log1p(y_raw) if USE_LOG_TARGET else y_raw.values
 
     X = df.drop(columns=[TARGET_COL])
 
-    X_train, X_test, y_reg_train, y_reg_test, y_clf_train, y_clf_test = train_test_split(
-        X, y_reg, y_clf,
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y,
         test_size=test_size,
         random_state=RANDOM_SEED,
-        stratify=y_clf,
     )
 
-    return X_train, X_test, y_reg_train, y_reg_test, y_clf_train, y_clf_test
+    return X_train, X_test, y_train, y_test
