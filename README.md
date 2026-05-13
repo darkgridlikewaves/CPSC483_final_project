@@ -66,6 +66,7 @@ CPSC483_final_project/
 │   ├── train_regression.py     # Ridge and Random Forest Regressor
 │   ├── train_classification.py # Logistic Regression and Random Forest Classifier
 │   └── evaluate.py             # Metrics, plots, and reports
+│   └── tune_models.py          # Hyperparameter testing
 ├── run_pipeline.py             # Main entry point
 └── app.py                      # Streamlit interactive web app
 ```
