@@ -2,7 +2,7 @@
 
 A machine learning project that predicts house sale prices using the Ames Housing dataset.
 The project uses **regression** to predict an exact sales price and **classification**
-predict a price tier: Low Tier / Medium Tier / High Tier / Luxury.
+to predict a price tier: Low Tier / Medium Tier / High Tier / Luxury.
 
 ---
 
@@ -65,9 +65,11 @@ CPSC483_final_project/
 │   ├── preprocessing.py        # Data loading and feature pipeline
 │   ├── train_regression.py     # Ridge and Random Forest Regressor
 │   ├── train_classification.py # Logistic Regression and Random Forest Classifier
-│   └── evaluate.py             # Metrics, plots, and reports
-│   └── tune_models.py          # Hyperparameter testing
+│   ├── evaluate.py             # Metrics, plots, and reports
+│   ├── tune_models.py          # Hyperparameter testing
+│   └── utils.py                # Shared helpers (tier labeling, console output)
 ├── run_pipeline.py             # Main entry point
+├── predict.py                  # CLI tool for single-house predictions
 └── app.py                      # Streamlit interactive web app
 ```
 
@@ -98,6 +100,37 @@ This will:
 4. Generate all evaluation metrics, confusion matrices, and ROC curves
 5. Save trained models to `models/` and plots to `outputs/figures/`
 
+
+### Making a Single Prediction (CLI)
+
+After training the models, use `predict.py` to get a price prediction for a specific house:
+
+```bash
+# Predict price and tier using key features
+python predict.py --overall-quality 8 --grade-living-area 2100 --garage-cars 2 --year-built 2003
+
+# Regression only with verbose output
+python predict.py --overall-quality 7 --grade-living-area 1800 --total-basement 900 --task regression --verbose
+
+# Classification only using Logistic Regression
+python predict.py --overall-quality 5 --grade-living-area 1200 --task classification --model logistic
+```
+
+| Argument | Type | Description |
+|----------|------|-------------|
+| `--overall-quality` | int (1-10) | Overall material and finish quality |
+| `--grade-living-area` | int | Above-grade living area (sq ft) |
+| `--garage-cars` | int | Garage capacity (number of cars) |
+| `--total-basement` | int | Total basement area (sq ft) |
+| `--year-built` | int | Original construction year |
+| `--neighborhood` | str | Neighborhood name (e.g. NridgHt, OldTown) |
+| `--bedrooms` | int | Bedrooms above basement level |
+| `--full-bath` | int | Number of full bathrooms |
+| `--task` | str | `regression`, `classification`, or `both` (default: both) |
+| `--model` | str | `ridge`, `rf`, or `logistic` (default: rf) |
+| `--verbose` | flag | Print confidence scores and extra detail |
+
+---
 
 ### Running the Web App (Demo)
 
@@ -144,3 +177,21 @@ After running the pipeline, three directories are created (all git-ignored):
 **`outputs/reports/`** — evaluation metrics
 - `regression_metrics.csv` — RMSE, MAE, and R² for both regression models
 - `classification_metrics.csv` — Accuracy, Precision, Recall, F1, and ROC AUC for both classifiers
+
+---
+
+## Results
+
+### Regression (test set, 20% holdout)
+| Model | RMSE | MAE | R² |
+|-------|------|-----|----|
+| Ridge Regression | $30,104 | $19,009 | 0.882 |
+| Random Forest Regressor | $30,461 | $17,801 | 0.879 |
+
+### Classification (test set, 20% holdout)
+| Model | Accuracy | F1 (weighted) | ROC-AUC |
+|-------|----------|---------------|---------|
+| Logistic Regression | 78.1% | 0.779 | 0.945 |
+| Random Forest Classifier | 76.7% | 0.766 | 0.944 |
+
+All models tuned with GridSearchCV and 5-fold cross-validation.
