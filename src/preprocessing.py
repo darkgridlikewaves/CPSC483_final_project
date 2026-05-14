@@ -1,14 +1,12 @@
 # sklearn preprocessing pipeline
 
-import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from src.config import RANDOM_SEED, TARGET_COL, TRAIN_CSV, USE_LOG_TARGET
+from src.config import TARGET_COL, TRAIN_CSV
 
 
 def load_data(csv_path=TRAIN_CSV):
@@ -58,18 +56,3 @@ def build_preprocessing_pipeline(numerical_cols, categorical_cols):
     return preprocessor
 
 
-def load_and_split(csv_path=TRAIN_CSV, test_size=0.2):
-    df = load_data(csv_path)
-
-    y_raw = df[TARGET_COL]
-    y = np.log1p(y_raw) if USE_LOG_TARGET else y_raw.values
-
-    X = df.drop(columns=[TARGET_COL])
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=test_size,
-        random_state=RANDOM_SEED,
-    )
-
-    return X_train, X_test, y_train, y_test

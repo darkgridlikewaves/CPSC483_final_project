@@ -3,9 +3,11 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 
+from src.config import TRAIN_CSV
+
 def tune_random_forest():
     print("Loading data for tuning...")
-    df = pd.read_csv("data/kaggle_data/train.csv")
+    df = pd.read_csv(TRAIN_CSV)
     
     features = ['GrLivArea', 'YearBuilt', 'OverallQual', 'TotalBsmtSF', 'GarageArea']
     

@@ -3,16 +3,14 @@ import pandas as pd
 import joblib
 import numpy as np
 
-# Configuration
-USE_LOG_TARGET = True
-TIER_LABELS = ["Low", "Medium", "High", "Luxury"]
+from src.config import MODELS_DIR, TIER_LABELS, TRAIN_CSV, USE_LOG_TARGET
 
 # Load Models and Base Data
 @st.cache_resource
 def load_models():
     try:
-        reg_model = joblib.load("models/random_forest_reg.joblib")
-        clf_model = joblib.load("models/random_forest_clf.joblib")
+        reg_model = joblib.load(MODELS_DIR / "random_forest_reg.joblib")
+        clf_model = joblib.load(MODELS_DIR / "random_forest_clf.joblib")
         return reg_model, clf_model
     except FileNotFoundError:
         st.error("Model files not found. Please run `python run_pipeline.py` first.")
@@ -21,7 +19,7 @@ def load_models():
 @st.cache_data
 def load_template_house():
     try:
-        df = pd.read_csv("data/kaggle_data/train.csv")
+        df = pd.read_csv(TRAIN_CSV)
         df = df.drop(columns=["Id", "SalePrice"], errors="ignore")
         
         template = pd.DataFrame([df.median(numeric_only=True)])
