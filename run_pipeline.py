@@ -1,22 +1,16 @@
 import numpy as np
-import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from src.config import RANDOM_SEED, TARGET_COL, TIER_BOUNDARIES, USE_LOG_TARGET
+from src.config import RANDOM_SEED, TARGET_COL, USE_LOG_TARGET
 from src.evaluate import evaluate_classification, evaluate_regression
 from src.preprocessing import build_preprocessing_pipeline, get_feature_lists, load_data
 from src.train_classification import train_classification_models
 from src.train_regression import train_regression_models
-
-
-def make_tier_labels(y_raw):
-    """Bin raw SalePrice values into 4 tier labels (0-3)."""
-    bins = [0] + TIER_BOUNDARIES + [float("inf")]
-    return pd.cut(y_raw, bins=bins, labels=[0, 1, 2, 3]).astype(int)
+from src.utils import make_tier_labels, print_section
 
 
 def main():
-    print("Loading data...")
+    print_section("Loading Data")
     df = load_data()
 
     y_raw = df[TARGET_COL]
@@ -34,12 +28,12 @@ def main():
     numerical_cols, categorical_cols = get_feature_lists(df)
     preprocessor = build_preprocessing_pipeline(numerical_cols, categorical_cols)
 
-    print("\n--- Regression ---")
+    print_section("Regression")
     reg_models = train_regression_models(preprocessor, X_train, y_reg_train)
     reg_metrics = evaluate_regression(reg_models, X_test, y_reg_test)
     print(reg_metrics.to_string(index=False))
 
-    print("\n--- Classification ---")
+    print_section("Classification")
     clf_models = train_classification_models(preprocessor, X_train, y_clf_train)
     clf_metrics = evaluate_classification(clf_models, X_test, y_clf_test)
     print(clf_metrics.to_string(index=False))
